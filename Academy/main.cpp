@@ -172,7 +172,7 @@ public:
 		cout << "TDestruktor:\t" << this << endl;
 	}
 	                                       // Metod
-	void info()const
+	void info()const override
 	{
 		Human::info();
 		cout << speciality << " " << experience << " " << endl;
@@ -219,7 +219,7 @@ public:
 		cout << "GDestructor:\t" << this << endl;
 	}
 	                                      // Metod
-	void info()const
+	void info()const override
 	{
 		Human::info();
 		cout << speciality << " " << year_of_release << " " << endl;
