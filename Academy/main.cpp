@@ -39,7 +39,7 @@ public:
 		this->age = age;
 	}
 
-    // Constructors:
+                                                      // Constructors:
 	Human(HUMAN_TAKE_PARAMETERS)
 	{
 		set_last_name(last_name);
@@ -52,7 +52,7 @@ public:
 		cout << "HDestructor:\t" << this << endl;
 	}
 
-	// METODS:
+	                                                 // METODS:
 	virtual void info()const
 	//void info()const
 	{
@@ -103,7 +103,7 @@ public:
 		this->attendance = attendance;
 	}
 
-	// CONSTRUCTORS:
+	                                           // CONSTRUCTORS:
 	Student(HUMAN_TAKE_PARAMETERS, STUDENT_TAKE_PARAMETERS):Human(HUMAN_GIVE_PARAMETERS)
 	{
 		set_speciality(speciality);
@@ -117,7 +117,7 @@ public:
 		cout << "SDestructor:\t" << this << endl;
 	}
 
-	// Methods:
+	                                            // Methods:
 	void info()const override // переопределить
 	{
 		Human::info();
@@ -149,7 +149,7 @@ public:
 		this->experience = experience;
 	}
 
-	// CONSTRUCTOR
+	                                       // CONSTRUCTOR
 	Teacher(HUMAN_TAKE_PARAMETERS, const std::string& speciality, unsigned int experience) : Human(HUMAN_GIVE_PARAMETERS)
 	{
 		set_speciality(speciality);
@@ -160,11 +160,50 @@ public:
 	{
 		cout << "TDestruktor:\t" << this << endl;
 	}
-	// Metod
+	                                       // Metod
 	void info()const
 	{
 		Human::info();
 		cout << speciality << " " << experience << " " << endl;
+	}
+};
+class Graduate : public Human
+{
+	std::string speciality;
+	int year_of_release;
+public:
+	const std::string& get_speciality()const
+	{
+		return speciality;
+	}
+	int get_year_of_release()const
+	{
+		return year_of_release;
+	}
+	void set_speciality(const std::string& speciality)
+	{
+		this->speciality = speciality;
+	}
+	void set_year_of_release(int year_of_release)
+	{
+		this->year_of_release = year_of_release;
+	}
+	                                        //CONSTRUCTOR GRADUATE
+	Graduate(HUMAN_TAKE_PARAMETERS, const std::string& speciality, int year_of_release) : Human(HUMAN_GIVE_PARAMETERS)
+	{
+		set_speciality(speciality);
+		set_year_of_release(year_of_release);
+		cout << "GConstructor:\t" << this << endl;
+	}
+	~Graduate()
+	{
+		cout << "GDestructor:\t" << this << endl;
+	}
+	                                      // Metod
+	void info()const
+	{
+		Human::info();
+		cout << speciality << " " << year_of_release << " " << endl;
 	}
 };
 
@@ -190,8 +229,9 @@ void main()
 	Human* group[] =
 	{
 		new Student("Pinkman", "Jessie", 22, "Chemistry", "WW_220", 70, 97),
-		new Teacher("Vannessa", "May", 48, "Chemistry", 18),
-		new Student("Vercetty", "Tommy", 30, "Theft", "Vice", 97, 98)
+		new Teacher("White", "Walter", 50, "Chemistry", 25),
+		new Student("Vercetty", "Tommy", 30, "Theft", "Vice", 97, 98),
+		new Graduate("Arnold", "Schvarzenegger", 76, "Bodybuilder", 1967)
 	};
 	cout << delimitr << endl;
 	for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)
