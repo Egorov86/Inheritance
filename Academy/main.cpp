@@ -250,21 +250,15 @@ void main()
 		
 	};
 	cout << delimiter << endl;
-	//for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)
-	//{
-	//	group[i]->info();
-	//	cout << delimiter << endl;
-	//	//delete group[i];
-	//}
 	for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)
 	{
-		group[i]->info();
-		//cout << *group[i] << endl;
+		//group[i]->info();
+		cout << *group[i] << endl;
 		cout << delimiter << endl;
 	}
 	cout << "DESTRUCTOR_DELETE_OBJECTS:\t" << endl;  // На отладчике посмотрел что вызывается всегда ДЕСТРУКТОР из Базового класса Human и не вызываются из дочерних.
 	for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)
 	{
-		delete group[i];
+		delete group[i]; //добавляем в деструктор базового класса virtual.
 	}
 }
