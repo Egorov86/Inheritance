@@ -47,7 +47,7 @@ public:
 		set_age(age);
 		cout << "Hconstructor:\t" << this << endl;
 	}
-	~Human()
+	virtual ~Human()
 	{
 		cout << "HDestructor:\t" << this << endl;
 	}
@@ -186,49 +186,40 @@ std::ostream& operator<<(std::ostream& os, const Teacher& obj)
 
 #define GRADUATE_TAKE_PARAMETERS  const std::string& speciality, int year_of_release
 #define GRADUATE_GIVE_PARAMETERS speciality, year_of_release
-class Graduate : public Human
+class Graduate : public Student
 {
-	std::string speciality;
-	int year_of_release;
+	std::string subject;
 public:
-	const std::string& get_speciality()const
+	const std::string& get_subject()const
 	{
-		return speciality;
+		return subject;
 	}
-	int get_year_of_release()const
+	void set_subject(const std::string& subject)
 	{
-		return year_of_release;
-	}
-	void set_speciality(const std::string& speciality)
-	{
-		this->speciality = speciality;
-	}
-	void set_year_of_release(int year_of_release)
-	{
-		this->year_of_release = year_of_release;
+		this->subject = subject;
 	}
 	                                        //CONSTRUCTOR GRADUATE
-	Graduate(HUMAN_TAKE_PARAMETERS, GRADUATE_TAKE_PARAMETERS) : Human(HUMAN_GIVE_PARAMETERS)
+	Graduate(HUMAN_TAKE_PARAMETERS, STUDENT_TAKE_PARAMETERS, const std::string& subject) : 
+		Student(HUMAN_GIVE_PARAMETERS, STUDENT_GIVE_PARAMETERS)
 	{
-		set_speciality(speciality);
-		set_year_of_release(year_of_release);
+		set_subject(subject);
 		cout << "GConstructor:\t" << this << endl;
 	}
 	~Graduate()
 	{
 		cout << "GDestructor:\t" << this << endl;
 	}
-	                                      // Metod
-	void info()const override
+	                                      // Methods:
+	void info() const override
 	{
-		Human::info();
-		cout << speciality << " " << year_of_release << " " << endl;
+		Student::info();
+		cout << subject << endl;
 	}
 };
 
 std::ostream& operator << (std::ostream & os, const Graduate & obj)
 {
-	return os << obj.get_speciality() << " " << obj.get_year_of_release();
+	return os << obj.get_subject();
 }
 
 //#define INHERITANCE_CHECK
@@ -254,8 +245,9 @@ void main()
 	{
 		new Student("Pinkman", "Jessie", 22, "Chemistry", "WW_220", 70, 97),
 		new Teacher("White", "Walter", 50, "Chemistry", 25),
+		new Graduate("Schrder", "Hank", 40, "Criminalistic", "OBN", 80, 90, "How to catch Heisenberg"),
 		new Student("Vercetty", "Tommy", 30, "Theft", "Vice", 97, 98),
-		new Graduate("Arnold", "Schvarzenegger", 76, "Bodybuilder", 1967)
+		
 	};
 	cout << delimiter << endl;
 	//for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)
@@ -266,8 +258,8 @@ void main()
 	//}
 	for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)
 	{
-		//group[i]->info();
-		cout << *group[i] << endl;
+		group[i]->info();
+		//cout << *group[i] << endl;
 		cout << delimiter << endl;
 	}
 	cout << "DESTRUCTOR_DELETE_OBJECTS:\t" << endl;  // На отладчике посмотрел что вызывается всегда ДЕСТРУКТОР из Базового класса Human и не вызываются из дочерних.
