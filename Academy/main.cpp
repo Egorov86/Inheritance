@@ -58,11 +58,16 @@ public:
 	{
 		cout << last_name << " " << first_name << " " << age << " y/o " << endl;
 	}
+	virtual std::ostream& info(std::ostream& os)const // метод info будет возвращать std::ostream& по ссылке
+		//void info()const // и принимать std::ostream& по ссылке и возвращать будет os и в os всt gfhfvtnhs 
+	{
+		return os << last_name << " " << first_name << " " << age << " y/o ";
+	}
 };
 
 std::ostream& operator<<(std::ostream& os, const Human& obj)
 {
-	return os << obj.get_first_name() << " " << obj.get_last_name() << " " << obj.get_age() << "y/o";
+	return obj.info(os);
 }
 
 #define STUDENT_TAKE_PARAMETERS const std::string& speciality, const std::string& group, double rating, double attendance  //брать
@@ -126,15 +131,19 @@ public:
 	void info()const override // переопределить
 	{
 		Human::info();
-		cout << speciality << " " << group << " " << rating << " " << attendance << endl;
+		cout << speciality << " " << group << " " << rating << " " << attendance;
+	}
+	std::ostream& info(std::ostream& os)const override
+	{
+		return Human::info(os) << " " << speciality << " " << group << " " << rating << " " << attendance;
 	}
 
 
 };
-std::ostream& operator<<(std::ostream& os, const Student& obj)
+/*std::ostream& operator<<(std::ostream& os, const Student& obj)
 {
 	return os << (Human&)obj << " " << obj.get_speciality() << " " << obj.get_group() << " " << obj.get_rating() << " " << obj.get_attendance();
-}
+}*/
 
 #define TEACHER_TAKE_PARAMETERS const std::string& speciality, unsigned int experience  //брать
 #define TEACHER_GIVE_PARAMETERS speciality, experience                                  //давать
@@ -175,14 +184,18 @@ public:
 	void info()const override
 	{
 		Human::info();
-		cout << speciality << " " << experience << " " << endl;
+		cout << speciality << " " << experience << " ";
+	}
+	std::ostream& info(std::ostream& os)const override
+	{
+		return Human::info(os) << " " << speciality << " " << experience << " ";
 	}
 };
 
-std::ostream& operator<<(std::ostream& os, const Teacher& obj)
+/*std::ostream& operator<<(std::ostream& os, const Teacher& obj)
 {
 	return os << (Human&) obj << " " << obj.get_speciality() << " " << obj.get_experience();
-}
+}*/
 
 #define GRADUATE_TAKE_PARAMETERS  const std::string& speciality, int year_of_release
 #define GRADUATE_GIVE_PARAMETERS speciality, year_of_release
@@ -215,12 +228,16 @@ public:
 		Student::info();
 		cout << subject << endl;
 	}
+	std::ostream& info(std::ostream& os) const override
+	{
+		return Student::info(os) << subject << endl;  // return Student:: для непосредств родителя
+	}
 };
 
-std::ostream& operator << (std::ostream & os, const Graduate & obj)
+/*std::ostream& operator << (std::ostream& os, const Graduate& obj)
 {
-	return os << (Human&) obj <<  " " << obj.get_subject();
-}
+	return os << (Human&) obj <<  " " << obj.get_subject() << " " << endl;
+}*/
 
 //#define INHERITANCE_CHECK
 
@@ -254,11 +271,11 @@ void main()
 	{
 		//group[i]->info();
 		//dynamic_cast <Student*> преобразование на указатель на Student
-		cout << typeid(*group[i]).name() << ":\t"; // определение типа значения
-		if (typeid(*group[i]) == typeid(Student))cout << *dynamic_cast <Student*>(group[i]) << endl;
-		if(typeid(*group[i]) == typeid(Teacher))cout << *dynamic_cast <Teacher*>(group[i]) << endl;
-		if(typeid(*group[i]) == typeid(Graduate))cout << *dynamic_cast <Graduate*>(group[i]) << endl;
-		//cout << *group[i] << endl;
+		//cout << typeid(*group[i]).name() << ":\t"; // определение типа значения
+		//if (typeid(*group[i]) == typeid(Student))cout << *dynamic_cast <Student*>(group[i]) << endl;
+		//if(typeid(*group[i]) == typeid(Teacher))cout << *dynamic_cast <Teacher*>(group[i]) << endl;
+		//if(typeid(*group[i]) == typeid(Graduate))cout << *dynamic_cast <Graduate*>(group[i]) << endl;
+		cout << *group[i] << endl;
 		cout << delimiter << endl;
 	}
 	cout << "DESTRUCTOR_DELETE_OBJECTS:\t" << endl;  // На отладчике посмотрел что вызывается всегда ДЕСТРУКТОР из Базового класса Human и не вызываются из дочерних.
