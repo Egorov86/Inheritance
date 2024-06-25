@@ -62,7 +62,7 @@ public:
 
 std::ostream& operator<<(std::ostream& os, const Human& obj)
 {
-	return os << obj.get_first_name() << " " << obj.get_last_name() << " " << obj.get_age();
+	return os << obj.get_first_name() << " " << obj.get_last_name() << " " << obj.get_age() << "y/o";
 }
 
 #define STUDENT_TAKE_PARAMETERS const std::string& speciality, const std::string& group, double rating, double attendance  //брать
@@ -133,7 +133,7 @@ public:
 };
 std::ostream& operator<<(std::ostream& os, const Student& obj)
 {
-	return os << obj.get_speciality() << " " << obj.get_group() << " " << obj.get_rating() << " "<< obj.get_attendance();
+	return os << (Human&)obj << " " << obj.get_speciality() << " " << obj.get_group() << " " << obj.get_rating() << " " << obj.get_attendance();
 }
 
 #define TEACHER_TAKE_PARAMETERS const std::string& speciality, unsigned int experience  //брать
@@ -181,7 +181,7 @@ public:
 
 std::ostream& operator<<(std::ostream& os, const Teacher& obj)
 {
-	return os << obj.get_speciality() << " " << obj.get_experience();
+	return os << (Human&) obj << " " << obj.get_speciality() << " " << obj.get_experience();
 }
 
 #define GRADUATE_TAKE_PARAMETERS  const std::string& speciality, int year_of_release
@@ -219,7 +219,7 @@ public:
 
 std::ostream& operator << (std::ostream & os, const Graduate & obj)
 {
-	return os << obj.get_subject();
+	return os << (Human&) obj <<  " " << obj.get_subject();
 }
 
 //#define INHERITANCE_CHECK
@@ -253,7 +253,12 @@ void main()
 	for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)
 	{
 		//group[i]->info();
-		cout << *group[i] << endl;
+		//dynamic_cast <Student*> преобразование на указатель на Student
+		cout << typeid(*group[i]).name() << ":\t"; // определение типа значения
+		if (typeid(*group[i]) == typeid(Student))cout << *dynamic_cast <Student*>(group[i]) << endl;
+		if(typeid(*group[i]) == typeid(Teacher))cout << *dynamic_cast <Teacher*>(group[i]) << endl;
+		if(typeid(*group[i]) == typeid(Graduate))cout << *dynamic_cast <Graduate*>(group[i]) << endl;
+		//cout << *group[i] << endl;
 		cout << delimiter << endl;
 	}
 	cout << "DESTRUCTOR_DELETE_OBJECTS:\t" << endl;  // На отладчике посмотрел что вызывается всегда ДЕСТРУКТОР из Базового класса Human и не вызываются из дочерних.
