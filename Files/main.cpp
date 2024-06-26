@@ -10,7 +10,7 @@ using std::endl;
 //using std::fout;
 
 //#define WRITE_TO_FILE
-#define READ_FROM_FILE
+//#define READ_FROM_FILE
 
 void main()
 {
@@ -57,4 +57,6 @@ void main()
 
 
 #endif // READ_FROM_FILE
+
+
 }
