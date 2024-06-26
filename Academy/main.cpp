@@ -1,6 +1,9 @@
 ﻿//Academy
 #include<iostream>
 #include<string>
+#include<iostream>
+#include<fstream>
+#include<ctime>
 using namespace std;
 
 #define delimiter "\n--------------------------\n"
@@ -239,6 +242,39 @@ public:
 	return os << (Human&) obj <<  " " << obj.get_subject() << " " << endl;
 }*/
 
+void Clear(Human* group[], const int n)
+{
+	cout << "DESTRUCTOR_DELETE_OBJECTS:\t" << endl;  // На отладчике посмотрел что вызывается всегда ДЕСТРУКТОР из Базового класса Human и не вызываются из дочерних.
+	for (int i = 0; i < n; i++)
+	{
+		delete group[i]; //добавляем в деструктор базового класса virtual.
+	}
+}
+
+void Print( Human* group[], const int n)
+{
+	cout << delimiter << endl;
+	for (int i = 0; i < n; i++)
+	{
+		cout << *group[i] << endl;
+		cout << delimiter << endl;
+	}
+
+}
+
+void Save(Human* group[], const int n, const std::string& filename)
+{
+	std::ofstream fout(filename);
+	for (int i = 0; i < n; i++)
+	{
+		fout << *group[i] << endl;
+	}
+	fout.close();
+	std::string cmd = "notepad" + filename;
+	system(cmd.c_str()); // C_str возвращ содержимое объекта std::string в виде обычной с-
+
+}
+
 //#define INHERITANCE_CHECK
 
 void main()
@@ -267,20 +303,11 @@ void main()
 		
 	};
 	cout << delimiter << endl;
-	for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)
-	{
-		//group[i]->info();
-		//dynamic_cast <Student*> преобразование на указатель на Student
-		//cout << typeid(*group[i]).name() << ":\t"; // определение типа значения
-		//if (typeid(*group[i]) == typeid(Student))cout << *dynamic_cast <Student*>(group[i]) << endl;
-		//if(typeid(*group[i]) == typeid(Teacher))cout << *dynamic_cast <Teacher*>(group[i]) << endl;
-		//if(typeid(*group[i]) == typeid(Graduate))cout << *dynamic_cast <Graduate*>(group[i]) << endl;
-		cout << *group[i] << endl;
-		cout << delimiter << endl;
-	}
-	cout << "DESTRUCTOR_DELETE_OBJECTS:\t" << endl;  // На отладчике посмотрел что вызывается всегда ДЕСТРУКТОР из Базового класса Human и не вызываются из дочерних.
-	for (int i = 0; i < sizeof(group) / sizeof(group[0]); i++)
-	{
-		delete group[i]; //добавляем в деструктор базового класса virtual.
-	}
+
+
+
+	Print(group, sizeof(group) / sizeof(group[0]));
+	Save(group, sizeof(group) / sizeof(group[0]), "group.txt");
+	Clear(group, sizeof(group) / sizeof(group[0]));
+
 }
