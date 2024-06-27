@@ -1,10 +1,12 @@
 ﻿//Academy
 #include<iostream>
-#include<string>
-#include<iostream>
 #include<fstream>
+#include<string>
 #include<ctime>
 using namespace std;
+using std::cin;
+using std::cout;
+using std::endl;
 
 #define delimiter "\n--------------------------\n"
 
@@ -191,7 +193,7 @@ public:
 	}
 	std::ostream& info(std::ostream& os)const override
 	{
-		return Human::info(os) << " " << speciality << " " << experience << " ";
+		return Human::info(os) << " " << speciality << " " << experience;
 	}
 };
 
@@ -233,7 +235,7 @@ public:
 	}
 	std::ostream& info(std::ostream& os) const override
 	{
-		return Student::info(os) << subject << endl;  // return Student:: для непосредств родителя
+		return Student::info(os) << subject;  // return Student:: для непосредств родителя
 	}
 };
 
@@ -242,14 +244,6 @@ public:
 	return os << (Human&) obj <<  " " << obj.get_subject() << " " << endl;
 }*/
 
-void Clear(Human* group[], const int n)
-{
-	cout << "DESTRUCTOR_DELETE_OBJECTS:\t" << endl;  // На отладчике посмотрел что вызывается всегда ДЕСТРУКТОР из Базового класса Human и не вызываются из дочерних.
-	for (int i = 0; i < n; i++)
-	{
-		delete group[i]; //добавляем в деструктор базового класса virtual.
-	}
-}
 
 void Print( Human* group[], const int n)
 {
@@ -262,6 +256,14 @@ void Print( Human* group[], const int n)
 
 }
 
+void Clear(Human* group[], const int n)
+{
+	cout << "DESTRUCTOR_DELETE_OBJECTS:\t" << endl;  // На отладчике посмотрел что вызывается всегда ДЕСТРУКТОР из Базового класса Human и не вызываются из дочерних.
+	for (int i = 0; i < n; i++)
+	{
+		delete group[i]; //добавляем в деструктор базового класса virtual.
+	}
+}
 void Save(Human* group[], const int n, const std::string& filename)
 {
 	std::ofstream fout(filename);
@@ -270,7 +272,7 @@ void Save(Human* group[], const int n, const std::string& filename)
 		fout << *group[i] << endl;
 	}
 	fout.close();
-	std::string cmd = "notepad" + filename;
+	std::string cmd = "notepad " + filename;
 	system(cmd.c_str()); // C_str возвращ содержимое объекта std::string в виде обычной с-
 
 }
@@ -299,7 +301,7 @@ void main()
 		new Student("Pinkman", "Jessie", 22, "Chemistry", "WW_220", 70, 97),
 		new Teacher("White", "Walter", 50, "Chemistry", 25),
 		new Graduate("Schrder", "Hank", 40, "Criminalistic", "OBN", 80, 90, "How to catch Heisenberg"),
-		new Student("Vercetty", "Tommy", 30, "Theft", "Vice", 97, 98),
+		new Student("Vercetty", "Tommy", 30, "Theft", "Vice", 97, 98)
 		
 	};
 	cout << delimiter << endl;
@@ -307,7 +309,9 @@ void main()
 
 
 	Print(group, sizeof(group) / sizeof(group[0]));
+
 	Save(group, sizeof(group) / sizeof(group[0]), "group.txt");
+
 	Clear(group, sizeof(group) / sizeof(group[0]));
 
 }
