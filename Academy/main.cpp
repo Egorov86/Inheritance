@@ -276,9 +276,32 @@ void Save(Human* group[], const int n, const std::string& filename)
 	system(cmd.c_str()); // C_str возвращ содержимое объекта std::string в виде обычной с-
 
 }
+void Load(Human* group[], const int n, const std::string& filename)
+{
+	std::ifstream fin("group.txt");
+	if (fin.is_open())
+	{
+		const int SIZE = 256;
+		char buffer[SIZE]{};
+
+		while (!fin.eof())
+		{
+			//fin >> buffer;
+			fin.getline(buffer, SIZE);
+			cout << buffer << endl;
+		}
+		std::string cmd = "notepad " + filename;
+		system(cmd.c_str());
+		fin.close();
+	}
+	else
+	{
+		std::cerr << "Error: File not found " << endl;
+	}
+}
 
 //#define INHERITANCE_CHECK
-
+#define PRINT_SAVE_LOAD_CLEAR
 void main()
 {
 	setlocale(LC_ALL, "Rus");
@@ -295,6 +318,7 @@ void main()
 	teacher.info();
 #endif // INHERITANCE_CHECK
 	
+#ifdef PRINT_SAVE_LOAD_CLEAR
 	// Generalization:
 	Human* group[] =
 	{
@@ -302,16 +326,21 @@ void main()
 		new Teacher("White", "Walter", 50, "Chemistry", 25),
 		new Graduate("Schrder", "Hank", 40, "Criminalistic", "OBN", 80, 90, "How to catch Heisenberg"),
 		new Student("Vercetty", "Tommy", 30, "Theft", "Vice", 97, 98)
-		
+
 	};
 	cout << delimiter << endl;
 
 
 
-	Print(group, sizeof(group) / sizeof(group[0]));
+	//Print(group, sizeof(group) / sizeof(group[0]));
 
-	Save(group, sizeof(group) / sizeof(group[0]), "group.txt");
+	//Save(group, sizeof(group) / sizeof(group[0]), "group.txt");
+
+	Load(group, sizeof(group) / sizeof(group[0]), "group.txt");
 
 	Clear(group, sizeof(group) / sizeof(group[0]));
+
+
+#endif // PRINT_SAVE_LOAD_CLEAR
 
 }

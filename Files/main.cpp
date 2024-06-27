@@ -41,7 +41,7 @@ void main()
 		const int SIZE = 256; // размер буффера
 		char buffer[SIZE]{};   //буфер
 
-		while (!fin.eof())    // NOT EndOfFile, если не конец
+		while (!fin.eof())    // NOT EndOfFile, пока не конец файла загружем содержимое ы буффер.
 		{
 			//fin >> buffer;            // читают до пробела
 			fin.getline(buffer, SIZE); //читают строку с пробелами 
