@@ -15,6 +15,10 @@ using std::endl;
 
 class Human
 {
+	static const int HUMAN_TYPE_WIDTH = 10;
+	static const int LAST_NAME_WIDTH = 15;
+	static const int FIRS_NAME_WIDTH = 15;
+	static const int AGE_WIDTH = 5;
 	std::string last_name;
 	std::string first_name;
 	unsigned int age;
@@ -68,17 +72,35 @@ public:
 	{
 		return os << last_name << " " << first_name << " " << age << " y/o ";
 	}
+	virtual std::ofstream& info(std::ofstream& ofs) const
+	{
+		//ofs << strchr(typeid(*this).name(), ' ') + 1 << ":\t" << last_name << " " << first_name << " " << age;
+		ofs.width(HUMAN_TYPE_WIDTH); ofs << left << std::string(strchr(typeid(*this).name(), ' ') + 1) << ":";
+		ofs.width(LAST_NAME_WIDTH);  ofs << left << last_name;
+		ofs.width(FIRS_NAME_WIDTH);  ofs << left << first_name;
+		ofs.width(AGE_WIDTH);        ofs << left << age;
+		return ofs;
+	}
+	// strchr(typeid(*this).name() - cортирован выводится только класс без слова класс.
 };
 
 std::ostream& operator<<(std::ostream& os, const Human& obj)
 {
 	return obj.info(os);
 }
+std::ofstream& operator<<(std::ofstream& ofs, const Human& obj)
+{
+	return obj.info(ofs);
+}
 
 #define STUDENT_TAKE_PARAMETERS const std::string& speciality, const std::string& group, double rating, double attendance  //брать
 #define STUDENT_GIVE_PARAMETERS speciality, group, rating, attendance                                                     //давать
 class Student :public Human
 {
+	static const int SPECIALITY_WIDTH = 25;
+	static const int GROUP_WIDTH = 8;
+	static const int RATING_WIDTH = 8;
+	static const int ATTENDANCE_WIDTH = 8;
 	std::string speciality;
 	std::string group;
 	double rating;
@@ -142,7 +164,15 @@ public:
 	{
 		return Human::info(os) << " " << speciality << " " << group << " " << rating << " " << attendance;
 	}
-
+	std::ofstream& info(std::ofstream& ofs)const override
+	{
+		Human::info(ofs);
+		ofs.width(SPECIALITY_WIDTH); ofs << speciality;
+		ofs.width(GROUP_WIDTH);      ofs << group;
+		ofs.width(RATING_WIDTH);     ofs << rating;
+		ofs.width(ATTENDANCE_WIDTH); ofs << attendance;
+		return ofs;
+	}
 
 };
 /*std::ostream& operator<<(std::ostream& os, const Student& obj)
@@ -154,6 +184,8 @@ public:
 #define TEACHER_GIVE_PARAMETERS speciality, experience                                  //давать
 class Teacher :public Human
 {
+	static const int SPECIALITY_WIDTH = 25;
+	static const int EXPERIENCE_WIDTH = 5;
 	std::string speciality;
 	unsigned int experience;
 public:
@@ -195,6 +227,13 @@ public:
 	{
 		return Human::info(os) << " " << speciality << " " << experience;
 	}
+	std::ofstream& info(std::ofstream& ofs)const override
+	{
+		Human::info(ofs);
+		ofs.width(SPECIALITY_WIDTH); ofs << speciality;
+		ofs.width(EXPERIENCE_WIDTH); ofs << experience;
+		return ofs;
+	}
 };
 
 /*std::ostream& operator<<(std::ostream& os, const Teacher& obj)
@@ -206,6 +245,7 @@ public:
 #define GRADUATE_GIVE_PARAMETERS speciality, year_of_release
 class Graduate : public Student
 {
+	static const int SUBJECT_WIDTH = 25;
 	std::string subject;
 public:
 	const std::string& get_subject()const
@@ -236,6 +276,12 @@ public:
 	std::ostream& info(std::ostream& os) const override
 	{
 		return Student::info(os) << subject;  // return Student:: для непосредств родителя
+	}
+	std::ofstream& info(std::ofstream& ofs)const override
+	{
+		Student::info(ofs);
+		ofs.width(SUBJECT_WIDTH); ofs << subject;
+		return ofs;
 	}
 };
 
@@ -324,12 +370,12 @@ void main()
 	{
 		new Student("Pinkman", "Jessie", 22, "Chemistry", "WW_220", 70, 97),
 		new Teacher("White", "Walter", 50, "Chemistry", 25),
-		new Graduate("Schrder", "Hank", 40, "Criminalistic", "OBN", 80, 90, "How to catch Heisenberg"),
-		new Student("Vercetty", "Tommy", 30, "Theft", "Vice", 97, 98)
+		new Graduate("Schreder", "Hank", 40, "Criminalistic", "OBN", 80, 90, "How to catch Heisenberg"),
+		new Student("Vercetty", "Tommy", 30, "Theft", "Vice", 97, 98),
+		new Teacher("Diaz", "Ricardo", 50, "Weapon distribution", 20),
 
 	};
 	cout << delimiter << endl;
-
 
 
 	//Print(group, sizeof(group) / sizeof(group[0]));
