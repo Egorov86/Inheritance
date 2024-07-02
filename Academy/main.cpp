@@ -176,10 +176,10 @@ public:
 	std::ofstream& write(std::ofstream& ofs)const override
 	{
 		Human::write(ofs);
-		ofs.width(SPECIALITY_WIDTH); ofs << speciality;
-		ofs.width(GROUP_WIDTH);      ofs << group;
-		ofs.width(RATING_WIDTH);     ofs << rating;
-		ofs.width(ATTENDANCE_WIDTH); ofs << attendance;
+		ofs.width(SPECIALITY_WIDTH); ofs << left << speciality;
+		ofs.width(GROUP_WIDTH);      ofs << left << group;
+		ofs.width(RATING_WIDTH);     ofs << left << rating;
+		ofs.width(ATTENDANCE_WIDTH); ofs << left << attendance;
 		return ofs;
 	}
 	std::ifstream& read(std::ifstream& ifs) override
@@ -250,8 +250,11 @@ public:
 	}
 	std::ifstream& read(std::ifstream& ifs) override
 	{
-		Human::read(ifs) >> speciality >> experience;
+		Human::read(ifs);
+		//ifs >> speciality >> experience;
+		std::getline(ifs, speciality);
 		return ifs;
+
 	}
 };
 
@@ -264,7 +267,7 @@ public:
 #define GRADUATE_GIVE_PARAMETERS speciality, year_of_release
 class Graduate : public Student
 {
-	static const int SUBJECT_WIDTH = 25;
+	static const int SUBJECT_WIDTH = 32;
 	std::string subject;
 public:
 	const std::string& get_subject()const
@@ -459,7 +462,7 @@ void main()
 	cout << delimiter << endl;
 
 
-	//Print(group, sizeof(group) / sizeof(group[0]));
+	Print(group, sizeof(group) / sizeof(group[0]));
 
 	Save(group, sizeof(group) / sizeof(group[0]), "group.txt");
 
