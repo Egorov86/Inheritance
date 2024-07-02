@@ -75,10 +75,10 @@ public:
 	virtual std::ofstream& write(std::ofstream& ofs) const
 	{
 		//ofs << strchr(typeid(*this).name(), ' ') + 1 << ":\t" << last_name << " " << first_name << " " << age;
-		ofs.width(HUMAN_TYPE_WIDTH); ofs << left << std::string(strchr(typeid(*this).name(), ' ') + 1) << ":";
-		ofs.width(LAST_NAME_WIDTH);  ofs << left << last_name;
-		ofs.width(FIRS_NAME_WIDTH);  ofs << left << first_name;
-		ofs.width(AGE_WIDTH);        ofs << left << age;
+		ofs.width(HUMAN_TYPE_WIDTH); ofs << left << std::string(strchr(typeid(*this).name(), ' ') + 1) + ":";
+		ofs.width(LAST_NAME_WIDTH);	ofs << left << last_name;
+		ofs.width(FIRS_NAME_WIDTH);	ofs << left << first_name;
+		ofs.width(AGE_WIDTH);		ofs << left << age;
 		return ofs;
 	}
 	virtual std::ifstream& read(std::ifstream& ifs)
@@ -136,7 +136,7 @@ public:
 	{
 		this->speciality = speciality;
 	}
-	void set_gpoup(const std::string& group)
+	void set_group(const std::string& group)
 	{
 		this->group = group;
 	}
@@ -153,7 +153,7 @@ public:
 	Student(HUMAN_TAKE_PARAMETERS, STUDENT_TAKE_PARAMETERS):Human(HUMAN_GIVE_PARAMETERS)
 	{
 		set_speciality(speciality);
-		set_gpoup(group);
+		set_group(group);
 		set_rating(rating);
 		set_attendance(attendance);
 		cout << "SConstructor:\t" << this << endl;
@@ -350,10 +350,10 @@ void Save(Human* group[], const int n, const std::string& filename)
 Human* HumanFactory(const std::string& type)
 {
 	Human* human = nullptr;
-	if (type=="Human")human = new Human("", "", 0);
-	if (type=="Student")human = new Student("", "", 0, "", "", 0, 0);
-	if (type=="Teacher")human = new Teacher("", "", 0, "", 0);
-	if (type=="Graduate")human = new Graduate("", "", 0, "", "", 0, 0, "");
+	if (type=="Human:")human = new Human("", "", 0);
+	if (type=="Student:")human = new Student("", "", 0, "", "", 0, 0);
+	if (type=="Teacher:")human = new Teacher("", "", 0, "", 0);
+	if (type=="Graduate:")human = new Graduate("", "", 0, "", "", 0, 0, "");
 	return human;
 	
 }
@@ -461,9 +461,9 @@ void main()
 
 	//Print(group, sizeof(group) / sizeof(group[0]));
 
-	//Save(group, sizeof(group) / sizeof(group[0]), "group.txt");
+	Save(group, sizeof(group) / sizeof(group[0]), "group.txt");
 
-	Load(group, sizeof(group) / sizeof(group[0]), "group.txt");
+	//Load(group, sizeof(group) / sizeof(group[0]), "group.txt");
 
 	Clear(group, sizeof(group) / sizeof(group[0]));
 
