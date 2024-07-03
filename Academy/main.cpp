@@ -184,7 +184,13 @@ public:
 	}
 	std::ifstream& read(std::ifstream& ifs) override
 	{
-		Human::read(ifs) >> speciality >> group >> rating >> attendance;
+		Human::read(ifs);
+		char buffer[SPECIALITY_WIDTH]{};
+		ifs.read(buffer, SPECIALITY_WIDTH);
+		for (int i = SPECIALITY_WIDTH - 1; buffer[i] == ' '; i--)buffer[i] = 0;
+		while (buffer[0] == ' ')for (int i = 0; buffer[i]; i++)buffer[i] = buffer[i + 1];
+		this->speciality = buffer;
+		ifs>> group >> rating >> attendance;
 		return ifs;
 	}
 
@@ -252,7 +258,19 @@ public:
 	{
 		Human::read(ifs);
 		//ifs >> speciality >> experience;
-		std::getline(ifs, speciality);
+		//std::getline(ifs, speciality);
+		const int SIZE = SPECIALITY_WIDTH;
+		char buffer[SIZE]{};
+		ifs.read(buffer, SIZE);
+		int poz = strrchr(buffer, ' ') - buffer; //String reverse character находит 
+		//buffer[poz] = 0;  //последнее вхождение указанного символа в указанной строке
+		for (int i = SIZE - 1; buffer[i] == ' '; i--)buffer[i] = 0;
+		while (buffer[0] == ' ')
+		{
+			for (int i = 0; buffer[i]; i++)buffer[i] = buffer[i+1];
+		}
+		this->speciality = buffer;
+		ifs >> experience;
 		return ifs;
 
 	}
