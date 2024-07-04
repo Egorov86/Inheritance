@@ -11,14 +11,14 @@ class Shapes
 public:
 	virtual double area() const = 0;
 	virtual double perimeter() const = 0;
-
+	virtual void draw()const = 0;
 	// CONSTRUCTOR
 };
 
 class Square :public Shapes  //Квадрат
 {
 private:
-	double a = 2;
+	double a = 3;
 public:
 	const double get_a()const
 	{
@@ -30,7 +30,7 @@ public:
 	}
 	double area()const
 	{
-		double S = (a*a)*2;
+		double S = a*2;
 		cout << "Площадь квадрата: " << S << endl;
 		return S;
 	}
@@ -40,14 +40,25 @@ public:
 		cout << "Периметр квадрата: " << P << endl;
 		return P;
 	}
+	void draw()const override
+	{
+		for (int i = 0; i < a; i++)
+		{
+			for (int j = 0; j < a; j++)
+			{
+				cout << " +";
+			}
+			cout << endl;
+		}
+	}
 
 }; 
 
 class Rectangle : public Shapes //Прямоугольник
 { 
 private:
-	double a = 2;
-	double b = 3.4;
+	double a = 3;
+	double b = 5;
 public:
 	const double ger_a()const
 	{
@@ -77,13 +88,24 @@ public:
 		cout << "Площадь прямоугольника: " << S << endl;
 		return S;
 	}
+	void draw()const override
+	{
+		for (int i = 0; i < a; i++)
+		{
+			for (int j = 0; j < b; j++)
+			{
+				cout << " +";
+			}
+			cout << endl;
+		}
+	}
 
 };
 
 class Circle :public Shapes  //Круг
 {
 private:
-	double r = 2.3;
+	double r = 5;
 public:
 	const double Pi = 3.14;
 	const double get_r()const
@@ -105,6 +127,19 @@ public:
 		double C = 2 * Pi * r;
 		cout << "Периметр круга: " << C << endl;
 		return C;
+	}
+	void draw()const override
+	{
+		for (int i = 0; i < (r*r); i++)
+		{
+			for (int j = 0; j < (r*r); j++)
+			{
+				if ((i - r) * (i - r) + (j - r) * (j - r) <  r*r)cout << " +";
+				//if (i - r)*(i - r) + (j + r) * (j + r) <= (2 * r)cout << "+";
+				else cout << "  ";
+			}
+			cout << endl;
+		}
 	}
 
 };
@@ -163,22 +198,26 @@ void main()
 	Square square;
 	square.area();
 	square.perimeter();
+	square.draw();
 	
 	cout << delimiter << endl;
 	
 	Rectangle restangle;
 	restangle.area();
 	restangle.perimeter();
+	restangle.draw();
 
 	cout << delimiter << endl;
 
 	Circle circle;
 	circle.area();
 	circle.perimeter();
+	circle.draw();
 
 	cout << delimiter << endl;
-
+	/*
 	Triangle triangle;
 	triangle.area();
 	triangle.perimeter();
+	cout << "Сторона а = " << triangle.get_a() << endl;*/
 }
