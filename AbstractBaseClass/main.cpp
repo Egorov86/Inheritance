@@ -28,7 +28,7 @@ void main()
 {
 	setlocale(LC_ALL, "Rus");
 	cout << "Hello AbstractBaseClasses"<< endl;
-	//Animal animal;
+	//Animal animal; C2259 ""
 	//Cat cat;
 	Tiger tiger;
 	tiger.sound();
