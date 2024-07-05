@@ -1,4 +1,4 @@
-//Geometric_Shapes
+п»ї//Geometric_Shapes
 #include<iostream>
 #include<cmath>
 
@@ -14,7 +14,7 @@ public:
 	virtual void draw()const = 0;
 };
 
-class Square :public Shapes  //Квадрат
+class Square :public Shapes  //РљРІР°РґСЂР°С‚
 {
 private:
 	double a = 3;
@@ -30,13 +30,13 @@ public:
 	double area()const
 	{
 		double S = a*2;
-		cout << "Площадь квадрата: " << S << endl;
+		cout << "РџР»РѕС‰Р°РґСЊ РєРІР°РґСЂР°С‚Р°: " << S << endl;
 		return S;
 	}
 	double perimeter()const
 	{
 		double P = (a + a) * 2;
-		cout << "Периметр квадрата: " << P << endl;
+		cout << "РџРµСЂРёРјРµС‚СЂ РєРІР°РґСЂР°С‚Р°: " << P << endl;
 		return P;
 	}
 	void draw()const override
@@ -53,7 +53,7 @@ public:
 
 }; 
 
-class Rectangle : public Shapes //Прямоугольник
+class Rectangle : public Shapes //РџСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРє
 { 
 private:
 	double a = 3;
@@ -78,13 +78,13 @@ public:
 	double area()const
 	{
 		double P = (a + b) * 2;
-		cout << "Периметр прямоугольника: " << P << endl;
+		cout << "РџРµСЂРёРјРµС‚СЂ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєР°: " << P << endl;
 		return P;
 	}
 	double perimeter()const
 	{
 		double S = (a * b) * 2;
-		cout << "Площадь прямоугольника: " << S << endl;
+		cout << "РџР»РѕС‰Р°РґСЊ РїСЂСЏРјРѕСѓРіРѕР»СЊРЅРёРєР°: " << S << endl;
 		return S;
 	}
 	void draw()const override
@@ -101,7 +101,7 @@ public:
 
 };
 
-class Circle :public Shapes  //Круг
+class Circle :public Shapes  //РљСЂСѓРі
 {
 private:
 	double r = 5;
@@ -118,13 +118,13 @@ public:
 	double area()const
 	{
 		double S = Pi * r*r;
-		cout << "Площадь круга: " << S << endl;
+		cout << "РџР»РѕС‰Р°РґСЊ РєСЂСѓРіР°: " << S << endl;
 		return S;
 	}
 	double perimeter()const
 	{
 		double C = 2 * Pi * r;
-		cout << "Периметр круга: " << C << endl;
+		cout << "РџРµСЂРёРјРµС‚СЂ РєСЂСѓРіР°: " << C << endl;
 		return C;
 	}
 	void draw()const override
@@ -143,7 +143,7 @@ public:
 
 };
 
-class Triangle : public Shapes  //Треугольик
+class Triangle : public Shapes  //РўСЂРµСѓРіРѕР»СЊРёРє
 {
 private:
 	double a = 2.4;
@@ -177,14 +177,14 @@ public:
 	double area()const
 	{
 		double PP = (a + b + c) / 2;
-		double S = sqrt(PP*((PP-a)*(PP-b)*(PP-c))); //Формула Герона
-		cout << "Площадь треугольника: " << S << endl;
+		double S = sqrt(PP*((PP-a)*(PP-b)*(PP-c))); //Р¤РѕСЂРјСѓР»Р° Р“РµСЂРѕРЅР°
+		cout << "РџР»РѕС‰Р°РґСЊ С‚СЂРµСѓРіРѕР»СЊРЅРёРєР°: " << S << endl;
 		return S;
 	}
 	double perimeter()const
 	{
 		double P = a + b + c;
-		cout << "Периметр треугольника: " << P << endl;
+		cout << "РџРµСЂРёРјРµС‚СЂ С‚СЂРµСѓРіРѕР»СЊРЅРёРєР°: " << P << endl;
 		return P;
 	}
 
@@ -218,5 +218,5 @@ void main()
 	Triangle triangle;
 	triangle.area();
 	triangle.perimeter();
-	cout << "Сторона а = " << triangle.get_a() << endl;*/
+	cout << "РЎС‚РѕСЂРѕРЅР° Р° = " << triangle.get_a() << endl;*/
 }
