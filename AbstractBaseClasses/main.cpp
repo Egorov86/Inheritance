@@ -6,7 +6,7 @@ using namespace std;
 
 #define delimiter "\n--------------------------\n"
 
-class Shapes
+class Shapes  // Класс фигуры
 {
 public:
 	virtual double area() const = 0;
@@ -104,7 +104,7 @@ public:
 class Circle :public Shapes  //Круг
 {
 private:
-	double r = 5;
+	double r = 8;
 public:
 	const double Pi = 3.14;
 	const double get_r()const
