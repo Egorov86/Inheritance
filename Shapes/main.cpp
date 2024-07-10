@@ -8,7 +8,7 @@ namespace Geometry
 {
 	enum Color  // enum (Enumeration) - это перечисление. Перечисление - это набор целочисленных констант
 	{
-		CONSOLE_BLUE = 0x99,
+		CONSOLE_BLUE = 0x09,
 		CONSOLE_GREEN = 0xAA,
 		CONSOLE_RED = 0xCC,
 		CONSOLE_DEFAULT = 0x07
@@ -111,14 +111,36 @@ namespace Geometry
 		}
 		void draw()const override
 		{
-			for (int i = 0; i < width; i++)
+			HWND hwnd = GetConsoleWindow(); //1)Получаем дескриптор окна консоли. Переменная в которой хранится описание чего-то.
+			//description 
+			//HWND - Handler to Window(обработчик или дескриптор окна)
+			HDC hdc = GetDC(hwnd); //2) получаем контекст устройства (Device context) окна консоли
+				//DC - это то на чем мы будем рисовать
+			HPEN hPen = CreatePen(PS_SOLID, 5, get_color());
+			//3) Создаем карандаш, Pen рисует контур фигуры
+			//PS_SOLID - сплошная линия
+			//5-толщина линии в пикселях
+			// 4) cоздаем кисточку
+			HBRUSH hBrush = CreateSolidBrush(get_color());
+			//5) Выбираем чем и на чем рисовать
+			SelectObject(hdc, hPen);
+			SelectObject(hdc, hBrush);
+			//6) Рисуем прямоугольник:
+			::Rectangle(hdc, 200, 10, 400, 150);
+			//чтобы показать что это глобальная функция надо поставить двойное двоеточие без операнда слева.
+			//7) Освобождаем ресурсы:
+			DeleteObject(hPen);
+			DeleteObject(hBrush);
+
+			ReleaseDC(hwnd, hdc);
+			/*for (int i = 0; i < height; i++)
 			{
-				for (int i = 0; i < height; i++)
+				for (int i = 0; i < width; i++)
 				{
 					cout << "* ";
 				}
 				cout << endl;
-			}
+			}*/
 		}
 		double get_width()const
 		{
@@ -157,6 +179,6 @@ void main() //C2259 "Square" не удалось создать экземпля
 	cout << "Перимет квадрата: " << square.get_perimeter() << endl;*/
 	square.info();
 
-	Geometry::Rectangle rect(8, 15, Geometry:: Color::CONSOLE_RED);
+	Geometry::Rectangle rect(10, 6, Geometry:: Color::CONSOLE_BLUE);
 	rect.info();
 }
