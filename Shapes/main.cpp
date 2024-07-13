@@ -1,6 +1,7 @@
 ﻿//AbstractGeometry
 #include<Windows.h>
 #include<iostream>
+#include<math.h>
 using namespace std;
 
 
@@ -121,7 +122,7 @@ namespace Geometry
 			//PS_SOLID - сплошная линия
 			//5-толщина линии в пикселях
 			// 4) cоздаем кисточку
-			HBRUSH hBrush = CreateSolidBrush(get_color());
+			HBRUSH hBrush = CreateSolidBrush(Geometry::Color::CONSOLE_DEFAULT);
 			//5) Выбираем чем и на чем рисовать
 			SelectObject(hdc, hPen);
 			SelectObject(hdc, hBrush);
@@ -166,6 +167,164 @@ namespace Geometry
 			Shape::info();
 		}
 	};
+	class Circle :public Shape
+	{
+	private:
+		double rad = 50;
+	public:
+		const double Pi = 3.14;
+		const double get_rad()const
+		{
+			return rad;
+		}
+		void set_rad(double rad)
+		{
+			this->rad = rad;
+		}
+		Circle(double rad, Color color) :Shape(color)
+		{
+			set_rad(rad);
+		}
+		virtual ~Circle() {};
+		double get_area()const override
+		{
+			return Pi * rad * rad;
+		}
+		double get_perimeter()const override
+		{
+			return(Pi * rad) * 2;
+		}
+		void draw()const override
+		{
+			HWND hwnd = GetConsoleWindow(); //1)Получаем дескриптор окна консоли. Переменная в которой хранится описание чего-то.
+			//description 
+			//HWND - Handler to Window(обработчик или дескриптор окна)
+			HDC hdc = GetDC(hwnd); //2) получаем контекст устройства (Device context) окна консоли
+			//DC - это то на чем мы будем рисовать
+			HPEN hPen = CreatePen(PS_SOLID, 9, get_color());
+			//3) Создаем карандаш, Pen рисует контур фигуры
+			//PS_SOLID - сплошная линия
+			//5-толщина линии в пикселях
+			// 4) cоздаем кисточку
+			HBRUSH hBrush = CreateSolidBrush(Geometry::Color::CONSOLE_GREEN);
+			//5) Выбираем чем и на чем рисовать
+			SelectObject(hdc, hPen);
+			SelectObject(hdc, hBrush);
+			//6) Рисуем прямоугольник:
+			::Ellipse(hdc, 350, 350, 350+rad, 350+rad);
+			//чтобы показать что это глобальная функция надо поставить двойное двоеточие без операнда слева.
+			//7) Освобождаем ресурсы:
+			DeleteObject(hPen);
+			DeleteObject(hBrush);
+
+			ReleaseDC(hwnd, hdc);
+			/*for (int i = 0; i < height; i++)
+			{
+				for (int i = 0; i < width; i++)
+				{
+					cout << "* ";
+				}
+				cout << endl;
+			}*/
+		}
+
+		void info()const override
+		{
+			cout << typeid(*this).name() << endl;
+			cout << "Радиус: " << get_rad() << endl;
+			Shape::info();
+		}
+
+	};
+	class Triangle : public Shape  //Треугольик
+	{
+	private:
+		double a = 2.4;
+		double b = 3;
+		double c = 2.5;
+	public:
+		const double get_a()const
+		{
+			return a;
+		}
+		void set_a(double a)
+		{
+			this->a = a;
+		}
+		const double get_b()const
+		{
+			return b;
+		}
+		void set_b(double b)
+		{
+			this->b = b;
+		}
+		const double get_c()const
+		{
+			return c;
+		}
+		void set_c(double c)
+		{
+			this->c = c;
+		}
+		Triangle(double a, double b, double c, Color color) :Shape(color)
+		{
+			set_a(a);
+			set_b(b);
+			set_c(c);
+		}
+		virtual ~Triangle() {};
+		double get_area()const override
+		{
+			return sqrt((a + b + c) / 2 * (((a + b + c) / 2 - a) * ((a + b + c) / 2 - b) * ((a + b + c) / 2 - c)));
+		}
+		double get_perimeter()const override
+		{
+			return (a+b+c);
+		}
+		void draw()const override
+		{
+			HWND hwnd = GetConsoleWindow(); //1)Получаем дескриптор окна консоли. Переменная в которой хранится описание чего-то.
+			//description 
+			//HWND - Handler to Window(обработчик или дескриптор окна)
+			HDC hdc = GetDC(hwnd); //2) получаем контекст устройства (Device context) окна консоли
+			//DC - это то на чем мы будем рисовать
+			HPEN hPen = CreatePen(PS_SOLID, 9, get_color());
+			//3) Создаем карандаш, Pen рисует контур фигуры
+			//PS_SOLID - сплошная линия
+			//5-толщина линии в пикселях
+			// 4) cоздаем кисточку
+			HBRUSH hBrush = CreateSolidBrush(Geometry::Color::CONSOLE_GREEN);
+			//5) Выбираем чем и на чем рисовать
+			SelectObject(hdc, hPen);
+			SelectObject(hdc, hBrush);
+			//6) Рисуем прямоугольник:
+			::Ellipse(hdc, 250, 250, 300 + a, 300 + b);
+			//чтобы показать что это глобальная функция надо поставить двойное двоеточие без операнда слева.
+			//7) Освобождаем ресурсы:
+			DeleteObject(hPen);
+			DeleteObject(hBrush);
+
+			ReleaseDC(hwnd, hdc);
+			/*for (int i = 0; i < height; i++)
+			{
+				for (int i = 0; i < width; i++)
+				{
+					cout << "* ";
+				}
+				cout << endl;
+			}*/
+		}
+		void info()const override
+		{
+			cout << typeid(*this).name() << endl;
+			cout << "Сторона a: " << get_a() << endl;
+			cout << "Сторона b: " << get_b() << endl;
+			cout << "Сторона c: " << get_c() << endl;
+			Shape::info();
+		}
+	};
+
 }
 
 void main() //C2259 "Square" не удалось создать экземпляр                        абстрактоного класса
@@ -179,6 +338,12 @@ void main() //C2259 "Square" не удалось создать экземпля
 	cout << "Перимет квадрата: " << square.get_perimeter() << endl;*/
 	square.info();
 
-	Geometry::Rectangle rect(10, 6, Geometry:: Color::CONSOLE_BLUE);
+	Geometry::Rectangle rect(10, 6, Geometry:: Color::CONSOLE_RED);
 	rect.info();
+
+	Geometry::Circle circle(70, Geometry::Color::CONSOLE_DEFAULT);
+	circle.info();
+
+	Geometry::Triangle triangle(4, 4, 5, Geometry::Color::CONSOLE_RED);
+	triangle.info();
 }
