@@ -127,7 +127,7 @@ namespace Geometry
 			SelectObject(hdc, hPen);
 			SelectObject(hdc, hBrush);
 			//6) Рисуем прямоугольник:
-			::Rectangle(hdc, 200, 10, 400, 150);
+			::Rectangle(hdc, 250, 50, 400, 150);
 			//чтобы показать что это глобальная функция надо поставить двойное двоеточие без операнда слева.
 			//7) Освобождаем ресурсы:
 			DeleteObject(hPen);
@@ -196,36 +196,18 @@ namespace Geometry
 		}
 		void draw()const override
 		{
-			HWND hwnd = GetConsoleWindow(); //1)Получаем дескриптор окна консоли. Переменная в которой хранится описание чего-то.
-			//description 
-			//HWND - Handler to Window(обработчик или дескриптор окна)
-			HDC hdc = GetDC(hwnd); //2) получаем контекст устройства (Device context) окна консоли
-			//DC - это то на чем мы будем рисовать
+			HWND hwnd = GetConsoleWindow(); 
+			HDC hdc = GetDC(hwnd); 
 			HPEN hPen = CreatePen(PS_SOLID, 9, get_color());
-			//3) Создаем карандаш, Pen рисует контур фигуры
-			//PS_SOLID - сплошная линия
-			//5-толщина линии в пикселях
-			// 4) cоздаем кисточку
 			HBRUSH hBrush = CreateSolidBrush(Geometry::Color::CONSOLE_GREEN);
-			//5) Выбираем чем и на чем рисовать
 			SelectObject(hdc, hPen);
 			SelectObject(hdc, hBrush);
-			//6) Рисуем прямоугольник:
-			::Ellipse(hdc, 350, 350, 350+rad, 350+rad);
-			//чтобы показать что это глобальная функция надо поставить двойное двоеточие без операнда слева.
-			//7) Освобождаем ресурсы:
+			::Ellipse(hdc, 320, 320, 320+rad, 320+rad);
+
 			DeleteObject(hPen);
 			DeleteObject(hBrush);
 
 			ReleaseDC(hwnd, hdc);
-			/*for (int i = 0; i < height; i++)
-			{
-				for (int i = 0; i < width; i++)
-				{
-					cout << "* ";
-				}
-				cout << endl;
-			}*/
 		}
 
 		void info()const override
@@ -239,9 +221,9 @@ namespace Geometry
 	class Triangle : public Shape  //Треугольик
 	{
 	private:
-		double a = 2.4;
-		double b = 3;
-		double c = 2.5;
+		double a = 90;
+		double b = 90;
+		double c = 90;
 	public:
 		const double get_a()const
 		{
@@ -284,36 +266,33 @@ namespace Geometry
 		}
 		void draw()const override
 		{
-			HWND hwnd = GetConsoleWindow(); //1)Получаем дескриптор окна консоли. Переменная в которой хранится описание чего-то.
-			//description 
-			//HWND - Handler to Window(обработчик или дескриптор окна)
-			HDC hdc = GetDC(hwnd); //2) получаем контекст устройства (Device context) окна консоли
-			//DC - это то на чем мы будем рисовать
+			HWND hwnd = GetConsoleWindow(); 
+			HDC hdc = GetDC(hwnd); 
 			HPEN hPen = CreatePen(PS_SOLID, 9, get_color());
-			//3) Создаем карандаш, Pen рисует контур фигуры
-			//PS_SOLID - сплошная линия
-			//5-толщина линии в пикселях
-			// 4) cоздаем кисточку
 			HBRUSH hBrush = CreateSolidBrush(Geometry::Color::CONSOLE_GREEN);
-			//5) Выбираем чем и на чем рисовать
 			SelectObject(hdc, hPen);
 			SelectObject(hdc, hBrush);
-			//6) Рисуем прямоугольник:
-			::Ellipse(hdc, 250, 250, 300 + a, 300 + b);
-			//чтобы показать что это глобальная функция надо поставить двойное двоеточие без операнда слева.
+			//определяем координаты треугольника
+			double x1 = a;
+			double y1 = a;
+			double x2 = x1 + a * cos(a/b);
+			double y2 = y1 + a * sin(a/b);
+			double x3 = x1 + c;
+			double y3 = y1;
+			//определяем массив точек которые образуют треугольник
+			POINT point[] =
+			{
+				{(int)x1+160, (int)y1+160},
+				{(int)x2+160, (int)y2+160},
+				{(int)x3+160, (int)y3+160}
+			};
+			// Рисуем треугольник:
+			Polygon(hdc,point, 3);
 			//7) Освобождаем ресурсы:
 			DeleteObject(hPen);
 			DeleteObject(hBrush);
 
 			ReleaseDC(hwnd, hdc);
-			/*for (int i = 0; i < height; i++)
-			{
-				for (int i = 0; i < width; i++)
-				{
-					cout << "* ";
-				}
-				cout << endl;
-			}*/
 		}
 		void info()const override
 		{
@@ -341,9 +320,9 @@ void main() //C2259 "Square" не удалось создать экземпля
 	Geometry::Rectangle rect(10, 6, Geometry:: Color::CONSOLE_RED);
 	rect.info();
 
-	Geometry::Circle circle(70, Geometry::Color::CONSOLE_DEFAULT);
+	Geometry::Circle circle(60, Geometry::Color::CONSOLE_DEFAULT);
 	circle.info();
 
-	Geometry::Triangle triangle(4, 4, 5, Geometry::Color::CONSOLE_RED);
+	Geometry::Triangle triangle(90, 90, 90, Geometry::Color::CONSOLE_DEFAULT);
 	triangle.info();
 }
