@@ -12,7 +12,11 @@ namespace Geometry
 		CONSOLE_BLUE = 0x09,
 		CONSOLE_GREEN = 0xAA,
 		CONSOLE_RED = 0xCC,
-		CONSOLE_DEFAULT = 0x07
+		CONSOLE_DEFAULT = 0x07,
+		RGB_RED = (0xFF0000), //Добавляем RGB цвета
+		RGB_GREEN =(0x00FF00),
+		RGB_BLUE =(0xFFFF00),
+		RGB_WHITE = (0xFFFFFF)
 	};
 
 	class Shape
@@ -122,12 +126,12 @@ namespace Geometry
 			//PS_SOLID - сплошная линия
 			//5-толщина линии в пикселях
 			// 4) cоздаем кисточку
-			HBRUSH hBrush = CreateSolidBrush(Geometry::Color::CONSOLE_DEFAULT);
+			HBRUSH hBrush = CreateSolidBrush(Geometry::Color::RGB_BLUE);
 			//5) Выбираем чем и на чем рисовать
 			SelectObject(hdc, hPen);
 			SelectObject(hdc, hBrush);
 			//6) Рисуем прямоугольник:
-			::Rectangle(hdc, 250, 50, 400, 150);
+		    ::Rectangle(hdc, 250, 50, 400, 150);
 			//чтобы показать что это глобальная функция надо поставить двойное двоеточие без операнда слева.
 			//7) Освобождаем ресурсы:
 			DeleteObject(hPen);
@@ -199,7 +203,7 @@ namespace Geometry
 			HWND hwnd = GetConsoleWindow(); 
 			HDC hdc = GetDC(hwnd); 
 			HPEN hPen = CreatePen(PS_SOLID, 9, get_color());
-			HBRUSH hBrush = CreateSolidBrush(Geometry::Color::CONSOLE_GREEN);
+			HBRUSH hBrush = CreateSolidBrush(Geometry::Color::CONSOLE_DEFAULT);
 			SelectObject(hdc, hPen);
 			SelectObject(hdc, hBrush);
 			::Ellipse(hdc, 320, 320, 320+rad, 320+rad);
@@ -269,7 +273,7 @@ namespace Geometry
 			HWND hwnd = GetConsoleWindow(); 
 			HDC hdc = GetDC(hwnd); 
 			HPEN hPen = CreatePen(PS_SOLID, 9, get_color());
-			HBRUSH hBrush = CreateSolidBrush(Geometry::Color::CONSOLE_GREEN);
+			HBRUSH hBrush = CreateSolidBrush(Geometry::Color::RGB_GREEN);
 			SelectObject(hdc, hPen);
 			SelectObject(hdc, hBrush);
 			//определяем координаты треугольника
@@ -317,10 +321,10 @@ void main() //C2259 "Square" не удалось создать экземпля
 	cout << "Перимет квадрата: " << square.get_perimeter() << endl;*/
 	square.info();
 
-	Geometry::Rectangle rect(10, 6, Geometry:: Color::CONSOLE_RED);
+	Geometry::Rectangle rect(10, 6, Geometry:: Color::CONSOLE_DEFAULT);
 	rect.info();
 
-	Geometry::Circle circle(60, Geometry::Color::CONSOLE_DEFAULT);
+	Geometry::Circle circle(60, Geometry::Color::RGB_GREEN);
 	circle.info();
 
 	Geometry::Triangle triangle(90, 90, 90, Geometry::Color::CONSOLE_DEFAULT);
