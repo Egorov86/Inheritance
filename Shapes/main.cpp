@@ -9,27 +9,63 @@ namespace Geometry
 {
 	enum Color  // enum (Enumeration) - это перечисление. Перечисление - это набор целочисленных констант
 	{
+		RED    = 0x000000FF,
+		GREEN  = 0x0000FF00,
+	    BLUE   = 0x00FF0000,
+		YELLOW = 0X0000FFFF,
 		CONSOLE_BLUE = 0x09,
 		CONSOLE_GREEN = 0xAA,
 		CONSOLE_RED = 0xCC,
 		CONSOLE_DEFAULT = 0x07,
-		RGB_RED = (0xFF0000), //Добавляем RGB цвета
-		RGB_GREEN =(0x00FF00),
-		RGB_BLUE =(0xFFFF00),
-		RGB_WHITE = (0xFFFFFF)
 	};
-
+#define SHAPE_TAKE_PARAMETERS unsigned int start_x, unsigned int start_y, unsigned int line_width, Color color
+#define SHAPE_GIVE_PARAMETERS start_x, start_y, line_width, color
 	class Shape
 	{
+	protected: //Защищенные поля, доступны только внутри класса и внутри его дочерних классов
+		//благодяря protected к этим полям можно будет обращаться напрямую в дочерних классах(без гет/сет методов)
 		Color color;
+		unsigned int start_x; //координаты по которым будет выводиться фигура
+		unsigned int start_y; //в любой графич оболочке координаты задаются в пикселях
+		//Начало координат всегда находится в левом верхнем углу.
+		unsigned int line_width; //толщина линии, которoй будет рисоваться контур фигуры
 	public:
-		Shape(Color color) :color(color) {}  //КОНСТРУКТОР И ВИРТ.ДЕСТРУКТОР
+		Shape(SHAPE_TAKE_PARAMETERS) :color(color) 
+		{
+			set_start_x(start_x);
+			set_start_y(start_y);
+			set_line_width(line_width);
+		}  //КОНСТРУКТОР И ВИРТ.ДЕСТРУКТОР
 		virtual ~Shape() {}   // {}пустая реализация, если ставить ; то нужно где то реализовывать
 		virtual double get_area()const = 0;
 		virtual double get_perimeter()const = 0;
 		virtual void draw()const = 0;
 		Color get_color()const { return color; }  //Geters
 		void set_color(Color color) { this->color = color; }  //Seters
+		unsigned int get_start_x()const
+		{
+			return start_x;
+		}
+		unsigned int get_start_y()const
+		{
+			return start_y;
+		}
+		unsigned int get_line_width()const
+		{
+			return line_width;
+		}
+		void set_start_x(unsigned int start_x)
+		{
+			this->start_x = start_x;
+		}
+		void set_start_y(unsigned int start_y)
+		{
+			this->start_y = start_y;
+		}
+		void set_line_width(unsigned int line_width)
+		{
+			this->line_width = line_width;
+		}
 		virtual void info()const
 		{
 			cout << "Площадь фигуры: " << get_area() << endl;
@@ -46,7 +82,7 @@ namespace Geometry
 		virtual void draw()const = 0;
 	};
 
-	class Square :public Shape
+	/*class Square :public Shape
 	{
 		double side;
 	public:
@@ -93,14 +129,14 @@ namespace Geometry
 		}
 
 
-	};
+	};*/
 
 	class Rectangle :public Shape
 	{
 		double width;
 		double height;
 	public:
-		Rectangle(double width, double height, Color color) :Shape(color)
+		Rectangle(double width, double height, SHAPE_TAKE_PARAMETERS) :Shape(SHAPE_GIVE_PARAMETERS) // принимаемые параметры - GIVE
 		{
 			set_width(width);
 			set_height(height);
@@ -126,12 +162,14 @@ namespace Geometry
 			//PS_SOLID - сплошная линия
 			//5-толщина линии в пикселях
 			// 4) cоздаем кисточку
-			HBRUSH hBrush = CreateSolidBrush(Geometry::Color::RGB_BLUE);
+			HBRUSH hBrush = CreateSolidBrush(get_color());
 			//5) Выбираем чем и на чем рисовать
 			SelectObject(hdc, hPen);
 			SelectObject(hdc, hBrush);
 			//6) Рисуем прямоугольник:
-		    ::Rectangle(hdc, 250, 50, 400, 150);
+		    ::Rectangle(hdc, start_x, start_y, start_x + width, start_y + height);
+			//start_x, start_y -координаты верхнего левого угла
+			// 800, 350 - координаты нижнего парвого угла
 			//чтобы показать что это глобальная функция надо поставить двойное двоеточие без операнда слева.
 			//7) Освобождаем ресурсы:
 			DeleteObject(hPen);
@@ -171,6 +209,12 @@ namespace Geometry
 			Shape::info();
 		}
 	};
+	class Square :public Rectangle
+	{
+	public:
+		Square(double side, SHAPE_TAKE_PARAMETERS) :Rectangle(side, side, SHAPE_GIVE_PARAMETERS) {} //делегируем прямоугольник с шириной и высотой и цвет
+
+	};
 	class Circle :public Shape
 	{
 	private:
@@ -185,7 +229,7 @@ namespace Geometry
 		{
 			this->rad = rad;
 		}
-		Circle(double rad, Color color) :Shape(color)
+		Circle(double rad, SHAPE_TAKE_PARAMETERS) :Shape(SHAPE_GIVE_PARAMETERS)
 		{
 			set_rad(rad);
 		}
@@ -203,10 +247,10 @@ namespace Geometry
 			HWND hwnd = GetConsoleWindow(); 
 			HDC hdc = GetDC(hwnd); 
 			HPEN hPen = CreatePen(PS_SOLID, 9, get_color());
-			HBRUSH hBrush = CreateSolidBrush(Geometry::Color::CONSOLE_DEFAULT);
+			HBRUSH hBrush = CreateSolidBrush(get_color());
 			SelectObject(hdc, hPen);
 			SelectObject(hdc, hBrush);
-			::Ellipse(hdc, 320, 320, 320+rad, 320+rad);
+			::Ellipse(hdc, start_x, start_y, start_x+rad, start_y+rad);
 
 			DeleteObject(hPen);
 			DeleteObject(hBrush);
@@ -253,7 +297,7 @@ namespace Geometry
 		{
 			this->c = c;
 		}
-		Triangle(double a, double b, double c, Color color) :Shape(color)
+		Triangle(double a, double b, double c, SHAPE_TAKE_PARAMETERS) :Shape(SHAPE_GIVE_PARAMETERS)
 		{
 			set_a(a);
 			set_b(b);
@@ -273,7 +317,7 @@ namespace Geometry
 			HWND hwnd = GetConsoleWindow(); 
 			HDC hdc = GetDC(hwnd); 
 			HPEN hPen = CreatePen(PS_SOLID, 9, get_color());
-			HBRUSH hBrush = CreateSolidBrush(Geometry::Color::RGB_GREEN);
+			HBRUSH hBrush = CreateSolidBrush( get_color());
 			SelectObject(hdc, hPen);
 			SelectObject(hdc, hBrush);
 			//определяем координаты треугольника
@@ -286,9 +330,9 @@ namespace Geometry
 			//определяем массив точек которые образуют треугольник
 			POINT point[] =
 			{
-				{(int)x1+160, (int)y1+160},
-				{(int)x2+160, (int)y2+160},
-				{(int)x3+160, (int)y3+160}
+				{(int)x1+ start_x, (int)y1+ start_y},
+				{(int)x2+ start_x, (int)y2+ start_y},
+				{(int)x3+ start_x, (int)y3+ start_y}
 			};
 			// Рисуем треугольник:
 			Polygon(hdc,point, 3);
@@ -315,18 +359,19 @@ void main() //C2259 "Square" не удалось создать экземпля
 {
 	setlocale(LC_ALL, "Rus");
 	//Shape shape(Color::CONSOLE_BLUE);
-	Geometry::Square square(5, Geometry::Color::CONSOLE_RED);
+	Geometry::Square square(60, 220, 90, 5, Geometry::Color::BLUE);
 	/*cout << "Длинна стороны квадрата: " << square.get_side() << endl;
 	cout << "Площадь квадрата: " << square.get_area() << endl;
 	cout << "Перимет квадрата: " << square.get_perimeter() << endl;*/
 	square.info();
 
-	Geometry::Rectangle rect(10, 6, Geometry:: Color::CONSOLE_DEFAULT);
+	Geometry::Rectangle rect(120, 80, 300, 70, 3, Geometry::Color::BLUE);
 	rect.info();
 
-	Geometry::Circle circle(60, Geometry::Color::RGB_GREEN);
+	Geometry::Circle circle( 40, 450, 95, 3, Geometry::Color::YELLOW);
 	circle.info();
 
-	Geometry::Triangle triangle(90, 90, 90, Geometry::Color::CONSOLE_DEFAULT);
+	Geometry::Triangle triangle(80, 80, 80, 450, 5, 3, Geometry::Color::YELLOW);
 	triangle.info();
+
 }
