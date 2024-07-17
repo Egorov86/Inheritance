@@ -1,4 +1,5 @@
 ﻿//AbstractGeometry
+#define _USE_MATH_DEFINES
 #include<Windows.h>
 #include<iostream>
 #include<math.h>
@@ -218,10 +219,15 @@ namespace Geometry
 	class Circle :public Shape
 	{
 	private:
-		double rad = 50;
+		double rad;
 	public:
-		const double Pi = 3.14;
-		const double get_rad()const
+		//const double Pi = 3.14;
+		Circle(double rad, SHAPE_TAKE_PARAMETERS) :Shape(SHAPE_GIVE_PARAMETERS)
+		{
+			set_rad(rad);
+		}
+		virtual ~Circle() {}
+		double get_rad()const
 		{
 			return rad;
 		}
@@ -229,18 +235,13 @@ namespace Geometry
 		{
 			this->rad = rad;
 		}
-		Circle(double rad, SHAPE_TAKE_PARAMETERS) :Shape(SHAPE_GIVE_PARAMETERS)
-		{
-			set_rad(rad);
-		}
-		virtual ~Circle() {};
 		double get_area()const override
 		{
-			return Pi * rad * rad;
+			return M_PI * rad * rad;
 		}
 		double get_perimeter()const override
 		{
-			return(Pi * rad) * 2;
+			return(M_PI * rad) * 2;
 		}
 		void draw()const override
 		{
@@ -250,8 +251,8 @@ namespace Geometry
 			HBRUSH hBrush = CreateSolidBrush(get_color());
 			SelectObject(hdc, hPen);
 			SelectObject(hdc, hBrush);
-			::Ellipse(hdc, start_x, start_y, start_x+rad, start_y+rad);
-
+			Ellipse(hdc, start_x, start_y, start_x+rad*2, start_y+rad*2);
+			//чтобы показать что это глобальная функция надо поставить двойное двоеточие без операнда слева.
 			DeleteObject(hPen);
 			DeleteObject(hBrush);
 
@@ -266,12 +267,12 @@ namespace Geometry
 		}
 
 	};
-	class Triangle : public Shape  //Треугольик
+	/*class Triangle : public Shape  //Треугольик
 	{
 	private:
-		double a = 90;
-		double b = 90;
-		double c = 90;
+		double a;
+		double b;
+		double c;
 	public:
 		const double get_a()const
 		{
@@ -316,7 +317,7 @@ namespace Geometry
 		{
 			HWND hwnd = GetConsoleWindow(); 
 			HDC hdc = GetDC(hwnd); 
-			HPEN hPen = CreatePen(PS_SOLID, 9, get_color());
+			HPEN hPen = CreatePen(PS_SOLID, 9, get_color()); //Solid -непрывн линия
 			HBRUSH hBrush = CreateSolidBrush( get_color());
 			SelectObject(hdc, hPen);
 			SelectObject(hdc, hBrush);
@@ -350,6 +351,57 @@ namespace Geometry
 			cout << "Сторона c: " << get_c() << endl;
 			Shape::info();
 		}
+	};*/
+
+	class Triangle :public Shape  //Треугольyик
+	{
+	public:
+		virtual double get_height()const = 0;
+		Triangle(SHAPE_TAKE_PARAMETERS) : Shape(SHAPE_GIVE_PARAMETERS) {}
+		~Triangle() {};
+	};
+	class EquilateralTriangle :public Triangle
+	{
+		double side;
+	public:
+		double get_side()const
+		{
+			return side;
+		}
+		void set_side(double side)
+		{
+			this->side = side;
+		}
+		double get_height()const override
+		{
+			return sqrt(side * side - side / 2 * side / 2);
+		}
+		double get_area()const override
+		{
+			return side / 2 * get_height();
+		}
+		double get_perimeter()const override
+		{
+			return side * 3;
+		}
+		void draw() const override
+		{
+			HWND hwnd = FindWindow(NULL, "Inheritance - Microsoft Visual Studio");
+			HDC hdc = GetDC(hwnd);
+
+			HPEN hPen = CreatePen(PS_SOLID, line_width, color);
+			HBRUSH hBrush = CreateSolidBrush(color);
+
+			SelectObject(hdc, hPen);
+			SelectObject(hdc, hBrush);
+
+
+
+			DeleteObject(hPen);
+			DeleteObject(hBrush);
+
+			ReleaseDC(hwnd, hdc);
+		}
 	};
 
 }
@@ -368,10 +420,10 @@ void main() //C2259 "Square" не удалось создать экземпля
 	Geometry::Rectangle rect(120, 80, 300, 70, 3, Geometry::Color::BLUE);
 	rect.info();
 
-	Geometry::Circle circle( 40, 450, 95, 3, Geometry::Color::YELLOW);
+	Geometry::Circle circle( 40, 450, 75, 3, Geometry::Color::YELLOW);
 	circle.info();
 
-	Geometry::Triangle triangle(80, 80, 80, 450, 5, 3, Geometry::Color::YELLOW);
-	triangle.info();
-
+	/*Geometry::Triangle triangle(80, 80, 80, 480, 5, 3, Geometry::Color::YELLOW);
+	triangle.info();*/
+	Geometry::Triangle triangle(300, 300, 5, Geometry::Color::GREEN);
 }
