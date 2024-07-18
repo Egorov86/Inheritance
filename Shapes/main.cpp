@@ -3,6 +3,8 @@
 #include<Windows.h>
 #include<iostream>
 #include<math.h>
+#include<winuser.h>
+//#include <cstdlib> //для случайного выбора вершин треугольника
 using namespace std;
 
 
@@ -10,10 +12,13 @@ namespace Geometry
 {
 	enum Color  // enum (Enumeration) - это перечисление. Перечисление - это набор целочисленных констант
 	{
-		RED    = 0x000000FF,
-		GREEN  = 0x0000FF00,
-	    BLUE   = 0x00FF0000,
-		YELLOW = 0X0000FFFF,
+		RED      = 0x000000FF,
+		DARK_RED = 0x00000077,
+		GREEN    = 0x0000FF00,
+	    BLUE     = 0x00FF0000,
+		YELLOW   = 0X0000FFFF,
+		PURPLE   = 0X00FF00FF,
+
 		CONSOLE_BLUE = 0x09,
 		CONSOLE_GREEN = 0xAA,
 		CONSOLE_RED = 0xCC,
@@ -21,6 +26,7 @@ namespace Geometry
 	};
 #define SHAPE_TAKE_PARAMETERS unsigned int start_x, unsigned int start_y, unsigned int line_width, Color color
 #define SHAPE_GIVE_PARAMETERS start_x, start_y, line_width, color
+#define delimiter "\n--------------------------\n"
 	class Shape
 	{
 	protected: //Защищенные поля, доступны только внутри класса и внутри его дочерних классов
@@ -153,7 +159,9 @@ namespace Geometry
 		}
 		void draw()const override
 		{
-			HWND hwnd = GetConsoleWindow(); //1)Получаем дескриптор окна консоли. Переменная в которой хранится описание чего-то.
+			HWND hwnd = FindWindowA(NULL, "Inheritance - Microsoft Visual Studio"); //РИСУЕТ В ОКНЕ VS
+			//HWND hwnd = GetConsoleWindow(); РИСУЕТ В ОКНЕ ВЫЗОВА
+			//HWND hwnd = GetConsoleWindow(); 1)Получаем дескриптор окна консоли. Переменная в которой хранится описание чего-то.
 			//description 
 			//HWND - Handler to Window(обработчик или дескриптор окна)
 			HDC hdc = GetDC(hwnd); //2) получаем контекст устройства (Device context) окна консоли
@@ -245,7 +253,8 @@ namespace Geometry
 		}
 		void draw()const override
 		{
-			HWND hwnd = GetConsoleWindow(); 
+			HWND hwnd = FindWindowA(NULL, "Inheritance - Microsoft Visual Studio"); //РИСУЕТ В ОКНЕ VS
+			//HWND hwnd = GetConsoleWindow(); РИСУЕТ В ОКНЕ ВЫЗОВА
 			HDC hdc = GetDC(hwnd); 
 			HPEN hPen = CreatePen(PS_SOLID, 9, get_color());
 			HBRUSH hBrush = CreateSolidBrush(get_color());
@@ -358,12 +367,18 @@ namespace Geometry
 	public:
 		virtual double get_height()const = 0;
 		Triangle(SHAPE_TAKE_PARAMETERS) : Shape(SHAPE_GIVE_PARAMETERS) {}
-		~Triangle() {};
+		Triangle(double get_height(), SHAPE_TAKE_PARAMETERS) : Shape(SHAPE_GIVE_PARAMETERS) {}
+		virtual~Triangle() {};
 	};
 	class EquilateralTriangle :public Triangle
 	{
 		double side;
 	public:
+		EquilateralTriangle(double side, SHAPE_TAKE_PARAMETERS) :Triangle(SHAPE_GIVE_PARAMETERS)
+		{
+			set_side(side);
+		}
+		virtual ~EquilateralTriangle() {};
 		double get_side()const
 		{
 			return side;
@@ -386,7 +401,8 @@ namespace Geometry
 		}
 		void draw() const override
 		{
-			HWND hwnd = FindWindow(NULL, "Inheritance - Microsoft Visual Studio");
+			HWND hwnd = FindWindowA(NULL, "Inheritance - Microsoft Visual Studio");
+			//HWND hwnd = FindWindow(NULL, "Inheritance - Microsoft Visual Studio");
 			HDC hdc = GetDC(hwnd);
 
 			HPEN hPen = CreatePen(PS_SOLID, line_width, color);
@@ -395,35 +411,223 @@ namespace Geometry
 			SelectObject(hdc, hPen);
 			SelectObject(hdc, hBrush);
 
+			/*int choise = rand() % 2;
+		    double x1 = side;
+			double y1 = side;
+			double x2 = x1 + side * cos(side / side);
+			double y2 = y1 + side * sin(side / side);
+			double x3 = x1 + side;
+			double y3 = y1;*/
 
-
+			double x1 = 0;
+			double y1 = 0 + get_height();
+			double x2 = x1 + side;
+			double y2 = get_height();
+			double x3 = side / 2;
+			double y3 = 0;
+			//определяем массив точек которые образуют треугольник
+			POINT point[] =
+			{
+				{(int)x1 + start_x, (int)y1 + start_y},
+				{(int)x2 + start_x, (int)y2 + start_y},
+				{(int)x3 + start_x, (int)y3 + start_y}
+			};
+			// Рисуем треугольник:
+			Polygon(hdc, point, 3);
 			DeleteObject(hPen);
 			DeleteObject(hBrush);
 
 			ReleaseDC(hwnd, hdc);
 		}
+		void info()const override
+		{
+			cout << typeid(*this).name() << endl;
+			cout << "Стороны а, b, c : " << get_side() << endl;
+			cout << "Высота треугольника : " << get_height() << endl;
+			Shape::info();
+		}
+	};
+	class IsoscelesTriangle :public Triangle
+	{
+		double side;
+		double base;
+	public:
+		IsoscelesTriangle(double side, double base, SHAPE_TAKE_PARAMETERS) :Triangle(SHAPE_GIVE_PARAMETERS)
+		{
+			set_side(side);
+			set_base(base);
+		}
+		virtual ~IsoscelesTriangle() {};
+		double get_side()const
+		{
+			return side;
+		}
+		double get_base()const
+		{
+			return base;
+		}
+		void set_side(double side)
+		{
+			this->side = side;
+		}
+		void set_base(double base)
+		{
+			this->base = base;
+		}
+		double get_height()const override
+		{
+			return sqrt(side * side - base / 2 * base / 2);
+		}
+		double get_area()const override
+		{
+			return base / 2 * get_height();
+		}
+		double get_perimeter()const override
+		{
+			return side * 2 + base;
+		}
+		void draw() const override
+		{
+			HWND hwnd = FindWindowA(NULL, "Inheritance - Microsoft Visual Studio");
+			//HWND hwnd = FindWindow(NULL, "Inheritance - Microsoft Visual Studio");
+			HDC hdc = GetDC(hwnd);
+
+			HPEN hPen = CreatePen(PS_SOLID, line_width, color);
+			HBRUSH hBrush = CreateSolidBrush(color);
+
+			SelectObject(hdc, hPen);
+			SelectObject(hdc, hBrush);
+
+			double x1 = 0;
+			double y1 = 0 + get_height();
+			double x2 = x1 + base;
+			double y2 = get_height();
+			double x3 = base / 2;
+			double y3 = 0;
+			//определяем массив точек которые образуют isoscelec треугольник
+			POINT point[] =
+			{
+				{(int)x1 + start_x, (int)y1 + start_y},
+				{(int)x2 + start_x, (int)y2 + start_y},
+				{(int)x3 + start_x, (int)y3 + start_y}
+			};
+			// Рисуем треугольник:
+			Polygon(hdc, point, 3);
+			DeleteObject(hPen);
+			DeleteObject(hBrush);
+
+			ReleaseDC(hwnd, hdc);
+		}
+		void info()const override
+		{
+			cout << typeid(*this).name() << endl;
+			cout << "Стороны а и c : " << get_side() << endl;
+			cout << "Основание в : " << get_base() << endl;
+			cout << "Высота треугольника : " << get_height() << endl;
+			Shape::info();
+		}
+
+	};
+	class A_right_angled_Triangle : public Triangle
+	{
+		double side;
+		double base;
+	public:
+		A_right_angled_Triangle(double side, double base, SHAPE_TAKE_PARAMETERS) :Triangle(SHAPE_GIVE_PARAMETERS)
+		{
+			set_side(side);
+			set_base(base);
+		}
+		virtual ~A_right_angled_Triangle() {};
+		double get_side()const
+		{
+			return side;
+		}
+		void set_side(double side)
+		{
+			this->side = side;
+		}
+		double get_base()const
+		{
+			return base;
+		}
+		void set_base(double base)
+		{
+			this->base = base;
+		}
+		double get_height()const override
+		{
+			return sqrt(side * side - base * base);
+		}
+		double get_area()const override
+		{
+			return base/2* get_height();
+		}
+		double get_perimeter()const override
+		{
+			return side + base + get_height();
+		}
+		void draw()const override
+		{
+			HWND hwnd = FindWindowA(NULL, "Inheritance - Microsoft Visual Studio");
+			HDC hdc = GetDC(hwnd);
+
+			HPEN hPen = CreatePen(PS_SOLID, line_width, color);
+			HBRUSH hBrush = CreateSolidBrush(color);
+
+			SelectObject(hdc, hPen);
+			SelectObject(hdc, hBrush);
+
+			double x1 = 0;
+			double y1 = get_height();
+			double x2 = x1 + base;
+			double y2 = get_height();
+			double x3 = 0;
+			double y3 = 0;
+			//определяем массив точек которые образуют прямой треугольник
+			POINT point[] =
+			{
+				{(int)x1 + start_x, (int)y1 + start_y},
+				{(int)x2 + start_x, (int)y2 + start_y},
+				{(int)x3 + start_x, (int)y3 + start_y}
+			};
+			// Рисуем треугольник:
+			Polygon(hdc, point, 3);
+			DeleteObject(hPen);
+			DeleteObject(hBrush);
+
+			ReleaseDC(hwnd, hdc);
+		}
+		void info()const override
+		{
+			cout << typeid(*this).name() << endl;
+			cout << "Гипотенуза : " << get_side() << endl;
+			cout << "Катет и основание : " << get_base() << endl;
+			cout << "Высота и второй катет треугольника : " << get_height() << endl;
+			Shape::info();
+		}
 	};
 
 }
-
 void main() //C2259 "Square" не удалось создать экземпляр                        абстрактоного класса
             //Е0322 Объект абстрактоного класса типа.квадрат не разрешён
 {
 	setlocale(LC_ALL, "Rus");
-	//Shape shape(Color::CONSOLE_BLUE);
-	Geometry::Square square(60, 220, 90, 5, Geometry::Color::BLUE);
-	/*cout << "Длинна стороны квадрата: " << square.get_side() << endl;
-	cout << "Площадь квадрата: " << square.get_area() << endl;
-	cout << "Перимет квадрата: " << square.get_perimeter() << endl;*/
+	Geometry::Square square(60, 220, 90, 5, Geometry::Color::DARK_RED);
 	square.info();
-
+	cout << delimiter << endl;
 	Geometry::Rectangle rect(120, 80, 300, 70, 3, Geometry::Color::BLUE);
 	rect.info();
-
+	cout << delimiter << endl;
 	Geometry::Circle circle( 40, 450, 75, 3, Geometry::Color::YELLOW);
 	circle.info();
-
-	/*Geometry::Triangle triangle(80, 80, 80, 480, 5, 3, Geometry::Color::YELLOW);
-	triangle.info();*/
-	Geometry::Triangle triangle(300, 300, 5, Geometry::Color::GREEN);
+	cout << delimiter << endl;
+	Geometry::EquilateralTriangle equ_triangle(120, 550, 50, 3, Geometry::Color::GREEN);
+	equ_triangle.info();
+	cout << delimiter << endl;
+	Geometry::IsoscelesTriangle iso_triangle(120, 80, 700, 45, 2, Geometry::Color::RED);
+	iso_triangle.info();
+	cout << delimiter << endl;
+	Geometry::A_right_angled_Triangle ara_triangle(160, 120, 820, 50, 4, Geometry::Color::PURPLE);
+	ara_triangle.info();
 }
