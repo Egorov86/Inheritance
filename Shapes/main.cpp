@@ -569,7 +569,7 @@ namespace Geometry
 		}
 		void draw()const override
 		{
-			HWND hwnd = FindWindowA(NULL, "Inheritance - Microsoft Visual Studio");
+			HWND hwnd = FindWindow(NULL, "Inheritance - Microsoft Visual Studio");
 			HDC hdc = GetDC(hwnd);
 
 			HPEN hPen = CreatePen(PS_SOLID, line_width, color);
