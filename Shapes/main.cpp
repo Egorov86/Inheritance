@@ -18,7 +18,6 @@ namespace Geometry
 	    BLUE     = 0x00FF0000,
 		YELLOW   = 0X0000FFFF,
 		PURPLE   = 0X00FF00FF,
-
 		CONSOLE_BLUE = 0x09,
 		CONSOLE_GREEN = 0xAA,
 		CONSOLE_RED = 0xCC,
@@ -29,24 +28,43 @@ namespace Geometry
 #define delimiter "\n--------------------------\n"
 	class Shape
 	{
-	protected: //Защищенные поля, доступны только внутри класса и внутри его дочерних классов
-		//благодяря protected к этим полям можно будет обращаться напрямую в дочерних классах(без гет/сет методов)
+	protected: //Защищенные поля, доступны только внутри класса и внутри его дочерних классов//благодяря protected к этим полям можно будет обращаться напрямую в дочерних классах(без гет/сет методов)
 		Color color;
 		unsigned int start_x; //координаты по которым будет выводиться фигура
 		unsigned int start_y; //в любой графич оболочке координаты задаются в пикселях
 		//Начало координат всегда находится в левом верхнем углу.
 		unsigned int line_width; //толщина линии, которoй будет рисоваться контур фигуры
+		static const int MIN_START_X = 100;  //Статическая константа 
+		static const int MAX_START_X = 1000;
+		static const int MIN_START_Y = 50;
+		static const int MAX_START_Y = 900;
+		static const int MIN_LINE_WIDTH = 1;
+		static const int MAX_LINE_WIDTH = 3;
+		static const int MIN_SIZE = 5;
+		static const int MAX_SIZE = 60;
+		//static const int MIN_RADIUS = 10;
+		//static const int MAX_RADIUS = 50;
+		static int count;
 	public:
 		Shape(SHAPE_TAKE_PARAMETERS) :color(color) 
 		{
 			set_start_x(start_x);
 			set_start_y(start_y);
 			set_line_width(line_width);
+			count++;
 		}  //КОНСТРУКТОР И ВИРТ.ДЕСТРУКТОР
-		virtual ~Shape() {}   // {}пустая реализация, если ставить ; то нужно где то реализовывать
+		virtual ~Shape() 
+		{
+			count--;
+		}   // {}пустая реализация, если ставить ; то нужно где то реализовывать
 		virtual double get_area()const = 0;
 		virtual double get_perimeter()const = 0;
 		virtual void draw()const = 0;
+		static int get_count()
+		{
+			return count;
+		}
+		
 		Color get_color()const { return color; }  //Geters
 		void set_color(Color color) { this->color = color; }  //Seters
 		unsigned int get_start_x()const
@@ -63,15 +81,27 @@ namespace Geometry
 		}
 		void set_start_x(unsigned int start_x)
 		{
+			if (start_x < MIN_START_X)start_x = MIN_START_X;
+			if (start_x > MAX_START_X)start_x = MAX_START_X;
 			this->start_x = start_x;
 		}
 		void set_start_y(unsigned int start_y)
 		{
+			if (start_x < MIN_START_Y)start_x = MIN_START_Y;
+			if (start_x > MAX_START_Y)start_x = MAX_START_Y;
 			this->start_y = start_y;
 		}
 		void set_line_width(unsigned int line_width)
 		{
+			if (line_width < MIN_LINE_WIDTH)line_width = MIN_LINE_WIDTH;
+			if (line_width > MAX_LINE_WIDTH)line_width = MAX_LINE_WIDTH;
 			this->line_width = line_width;
+		}
+		double filter_size(double size)
+		{
+			if (size < MIN_SIZE) size = MIN_SIZE;
+			if (size > MAX_SIZE) size = MAX_SIZE;
+			return size;
 		}
 		virtual void info()const
 		{
@@ -80,7 +110,6 @@ namespace Geometry
 			draw();
 		}
 	};
-
 	class Shapes  // Класс фигуры
 	{
 	public:
@@ -88,7 +117,7 @@ namespace Geometry
 		virtual double perimeter() const = 0;
 		virtual void draw()const = 0;
 	};
-
+	int Shape::count = 0;
 	/*class Square :public Shape
 	{
 		double side;
@@ -204,11 +233,11 @@ namespace Geometry
 		}
 		void set_width(double width)
 		{
-			this->width = width;
+			this->width = filter_size(width);
 		}
 		void set_height(double height)
 		{
-			this->height = height;
+			this->height = filter_size(height);
 		}
 		void info()const override
 		{
@@ -241,7 +270,9 @@ namespace Geometry
 		}
 		void set_rad(double rad)
 		{
-			this->rad = rad;
+			//if (rad < MIN_RADIUS) rad = MIN_RADIUS;
+			//if (rad > MAX_RADIUS) rad = MAX_RADIUS;
+			this->rad = filter_size(rad);
 		}
 		double get_area()const override
 		{
@@ -367,8 +398,13 @@ namespace Geometry
 	public:
 		virtual double get_height()const = 0;
 		Triangle(SHAPE_TAKE_PARAMETERS) : Shape(SHAPE_GIVE_PARAMETERS) {}
-		Triangle(double get_height(), SHAPE_TAKE_PARAMETERS) : Shape(SHAPE_GIVE_PARAMETERS) {}
+		//Triangle(double get_height(), SHAPE_TAKE_PARAMETERS) : Shape(SHAPE_GIVE_PARAMETERS) {}
 		virtual~Triangle() {};
+		void info()const override
+		{
+			cout << "Высота треугольника: " << get_height() << endl;
+			Shape::info();
+		}
 	};
 	class EquilateralTriangle :public Triangle
 	{
@@ -385,7 +421,7 @@ namespace Geometry
 		}
 		void set_side(double side)
 		{
-			this->side = side;
+			this->side = filter_size(side);
 		}
 		double get_height()const override
 		{
@@ -418,19 +454,12 @@ namespace Geometry
 			double y2 = y1 + side * sin(side / side);
 			double x3 = x1 + side;
 			double y3 = y1;*/
-
-			double x1 = 0;
-			double y1 = 0 + get_height();
-			double x2 = x1 + side;
-			double y2 = get_height();
-			double x3 = side / 2;
-			double y3 = 0;
 			//определяем массив точек которые образуют треугольник
 			POINT point[] =
 			{
-				{(int)x1 + start_x, (int)y1 + start_y},
-				{(int)x2 + start_x, (int)y2 + start_y},
-				{(int)x3 + start_x, (int)y3 + start_y}
+				{start_x, start_y + side},
+				{start_x + side, start_y + side},
+				{start_x + side/2, start_y + side - get_height()}
 			};
 			// Рисуем треугольник:
 			Polygon(hdc, point, 3);
@@ -442,7 +471,7 @@ namespace Geometry
 		void info()const override
 		{
 			cout << typeid(*this).name() << endl;
-			cout << "Стороны а, b, c : " << get_side() << endl;
+			cout << "Длина тороны а, b, c : " << get_side() << endl;
 			cout << "Высота треугольника : " << get_height() << endl;
 			Shape::info();
 		}
@@ -498,21 +527,15 @@ namespace Geometry
 			SelectObject(hdc, hPen);
 			SelectObject(hdc, hBrush);
 
-			double x1 = 0;
-			double y1 = 0 + get_height();
-			double x2 = x1 + base;
-			double y2 = get_height();
-			double x3 = base / 2;
-			double y3 = 0;
 			//определяем массив точек которые образуют isoscelec треугольник
 			POINT point[] =
 			{
-				{(int)x1 + start_x, (int)y1 + start_y},
-				{(int)x2 + start_x, (int)y2 + start_y},
-				{(int)x3 + start_x, (int)y3 + start_y}
+				{start_x, start_y+ base},
+				{start_x+ base, start_y + base},
+				{start_x+base/2, start_y + base-get_height()}
 			};
 			// Рисуем треугольник:
-			Polygon(hdc, point, 3);
+			::Polygon(hdc, point, 3);
 			DeleteObject(hPen);
 			DeleteObject(hBrush);
 
@@ -587,9 +610,9 @@ namespace Geometry
 			//определяем массив точек которые образуют прямой треугольник
 			POINT point[] =
 			{
-				{(int)x1 + start_x, (int)y1 + start_y},
-				{(int)x2 + start_x, (int)y2 + start_y},
-				{(int)x3 + start_x, (int)y3 + start_y}
+				{start_x, start_y + base},
+				{start_x + base, start_y + base},
+				{start_x + base, start_y + base - get_height()}
 			};
 			// Рисуем треугольник:
 			Polygon(hdc, point, 3);
@@ -613,21 +636,24 @@ void main() //C2259 "Square" не удалось создать экземпля
             //Е0322 Объект абстрактоного класса типа.квадрат не разрешён
 {
 	setlocale(LC_ALL, "Rus");
-	Geometry::Square square(60, 220, 90, 5, Geometry::Color::DARK_RED);
+	Geometry::Square square(50, 220, 90, 5, Geometry::Color::DARK_RED);
 	square.info();
 	cout << delimiter << endl;
-	Geometry::Rectangle rect(120, 80, 300, 70, 3, Geometry::Color::BLUE);
+	Geometry::Rectangle rect(80, 40, 300, 70, 3, Geometry::Color::BLUE);
 	rect.info();
 	cout << delimiter << endl;
-	Geometry::Circle circle( 40, 450, 75, 3, Geometry::Color::YELLOW);
+	Geometry::Circle circle( 150, 390, 65, 3, Geometry::Color::YELLOW);
 	circle.info();
 	cout << delimiter << endl;
 	Geometry::EquilateralTriangle equ_triangle(120, 550, 50, 3, Geometry::Color::GREEN);
 	equ_triangle.info();
 	cout << delimiter << endl;
-	Geometry::IsoscelesTriangle iso_triangle(120, 80, 700, 45, 2, Geometry::Color::RED);
+	Geometry::IsoscelesTriangle iso_triangle(120, 100, 700, 75, 2, Geometry::Color::RED);
 	iso_triangle.info();
 	cout << delimiter << endl;
-	Geometry::A_right_angled_Triangle ara_triangle(160, 120, 820, 50, 4, Geometry::Color::PURPLE);
+	Geometry::A_right_angled_Triangle ara_triangle(160, 120, 820, 50, 60, Geometry::Color::PURPLE);
 	ara_triangle.info();
+
+	cout << "Количество фигур: " << equ_triangle.get_count()<< endl;
+	cout << "Количество фигур: " << Geometry::Shape::get_count() << endl;
 }
